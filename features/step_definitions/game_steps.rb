@@ -69,13 +69,7 @@ Then /^(?:|I )should be on (.+)$/ do |page_name|
 end
 
 Then /^(?:|I )should see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
-  with_scope(selector) do
-    if page.respond_to? :should
-      page.should have_content(text)
-    else
-      assert page.has_content?(text)
-    end
-  end
+  (selector ? page.first(selector) : page).should have_content(text)
 end
 
 When /^(?:|I )press "([^\"]*)"(?: within "([^\"]*)")?$/ do |button, selector|
