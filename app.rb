@@ -42,7 +42,7 @@ class HangpersonApp < Sinatra::Base
         flash[:message] = "You have already used that letter."
       end
     rescue ArgumentError
-      flash[:message] = "Invalid input"
+      flash[:message] = "Invalid guess."
     end
     redirect '/show'
   end
@@ -64,12 +64,20 @@ class HangpersonApp < Sinatra::Base
   end
 
   get '/win' do
-    raise unless @game.check_win_or_lose == :win
-    erb :win
+    if @game.check_win_or_lose == :win
+      erb :win
+    else
+      flash[:message] = "No cheating here"
+      redirect '/show'
+    end
   end
 
   get '/lose' do
-    raise unless @game.check_win_or_lose == :lose
-    erb :lose
+    if @game.check_win_or_lose == :lose
+      erb :lose
+    else
+      flash[:message] = "No cheating here"
+      redirect '/show'
+    end
   end
 end
