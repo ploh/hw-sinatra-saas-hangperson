@@ -1,37 +1,36 @@
 class HangpersonGame
   attr_accessor :word, :guesses, :wrong_guesses
 
-  # add the necessary class methods, attributes, etc. here
-  # to make the tests in spec/hangperson_game_spec.rb pass.
-
-  # Get a word from remote "random word" service
-
-  # def initialize()
-  # end
-
   def initialize(word)
-    @word = word
-    @guesses = ""
-    @wrong_guesses = ""
+    self.word = word
+    self.guesses = ""
+    self.wrong_guesses = ""
   end
 
-  def guess(letter)
-    raise ArgumentError if letter !~ /^[[:alpha:]]$/
+  def guess letter
+    raise ArgumentError unless letter =~ /^[[:alpha:]]$/
     letter = letter.downcase
-    if @word.include? letter
-      unless @guesses.include? letter
-        @guesses << letter
-      else
-        return false
-      end
-    else
-      unless @wrong_guesses.include? letter
-        @wrong_guesses << letter
-      else
-        return false
-      end
+    guessed_letters = word.include?(letter) ? guesses : wrong_guesses
+    guessed_letters.include?(letter) ? false : guessed_letters << letter
+  end
+
+  def word_with_guesses
+    result = ""
+    word.chars do |letter|
+      result << ( guesses.include?(letter) ? letter : "-" )
     end
-    true
+    result
+  end
+
+  def check_win_or_lose
+    case
+    when word_with_guesses == word
+      :win
+    when wrong_guesses.size >= 7
+      :lose
+    else
+      :play
+    end
   end
 
   def self.get_random_word
@@ -40,5 +39,4 @@ class HangpersonGame
     uri = URI('http://watchout4snakes.com/wo4snakes/Random/RandomWord')
     Net::HTTP.post_form(uri ,{}).body
   end
-
 end
